@@ -55,21 +55,26 @@ Sub StockSummary()
                         totalVolume = totalVolume + Worksheets(x).Cells(i,7).Value 'keep running total of volume until unique ticker is found
                 End If
             Next i
-        Dim lastSummaryRow as Double 'find number of rows in summary section 
-            lastSummaryRow = Worksheets(x).Cells(Rows.Count, "I").End(xlUp).Row
-        Dim y as Double
-            For y = 2 to lastSummaryRow
-                Dim tickerArray(), percentChangeArray(), volumeArray() as String 'gather data into 2 arrays for reference
-                    tickerArray = Cells(i,9).Value
-                    percentChangeArray = Cells(i,11).Value
-                    volumeArray = Cells(i,12).Value
+        Dim greatestIncrease, greatestDecrease, greatestVolume as Double
+        greatestIncrease = WorksheetFunction.Max(Worksheets(x).Range("K2:K" & summaryRow).Value)
+        greatestDecrease = WorksheetFunction.Min(Worksheets(x).Range("K2:K" & summaryRow).Value)
+        greatestVolume = WorksheetFunction.Max(Worksheets(x).Range("L2:L" & summaryRow).Value)
+
+            Dim y as Double
+                For y = 2 to summaryRow
+                    IF ( Worksheets(x).Cells(y,11).Value = greatestIncrease ) Then
+                        Worksheets(x).Range("P2").Value = Worksheets(x).Cells(y,9).Value
+                        Worksheets(x).Range("Q2").Value = Worksheets(x).Cells(y,11).Value
+                        Worksheets(x).Range("Q2").Style = "Percent"
+                    ElseIF ( Worksheets(x).Cells(y,11).Value = greatestDecrease ) Then
+                        Worksheets(x).Range("P3").Value = Worksheets(x).Cells(y,9).Value     
+                        Worksheets(x).Range("Q3").Value = Worksheets(x).Cells(y,11).Value
+                        Worksheets(x).Range("Q3").Style = "Percent"  
+                    ElseIF ( Worksheets(x).Cells(y,12).Value = greatestVolume ) Then
+                        Worksheets(x).Range("P4").Value = Worksheets(x).Cells(y,9).Value
+                        Worksheets(x).Range("Q4").Value = Worksheets(x).Cells(y,12).Value
+                End If 
             Next y
-        Worksheets(x).Range("P2").Value = WorksheetFunction.Min(yearlyChange)
-            
-
-
-        Next y
-        
-        
+        Worksheets(x).Range("A:Q").Columns.AutoFit       
         Next x    
 End Sub
