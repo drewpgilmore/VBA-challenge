@@ -39,8 +39,11 @@ Sub StockSummary()
                             Worksheets(x).Range("J" & summaryRow).Interior.ColorIndex = 4 'color cell green
                             Else Worksheets(x).Range("J" & summaryRow).Interior.ColorIndex = 3 'color cell red
                         End If                          
-                        Worksheets(x).Range("J" & summaryRow).Value = yearlyChange 'print yearly change to column J                    
-                    percentChange = yearlyChange / openPrice 'set percent change to equal yearly change divided by open price
+                        Worksheets(x).Range("J" & summaryRow).Value = yearlyChange 'print yearly change to column J
+                        IF openPrice = 0 Then
+                            percentChange = 0
+                            Else percentChange = yearlyChange / openPrice 'set percent change to equal yearly change divided by open price
+                        End If
                         Worksheets(x).Range("K" & summaryRow).Value = percentChange 'print percentage change to column K
                         Worksheets(x).Range("K" & summaryRow).Style = "Percent"
                     totalVolume = totalVolume + Worksheets(x).Cells(i,7).Value 'set totalVolume
@@ -52,5 +55,21 @@ Sub StockSummary()
                         totalVolume = totalVolume + Worksheets(x).Cells(i,7).Value 'keep running total of volume until unique ticker is found
                 End If
             Next i
+        Dim lastSummaryRow as Double 'find number of rows in summary section 
+            lastSummaryRow = Worksheets(x).Cells(Rows.Count, "I").End(xlUp).Row
+        Dim y as Double
+            For y = 2 to lastSummaryRow
+                Dim tickerArray(), percentChangeArray(), volumeArray() as String 'gather data into 2 arrays for reference
+                    tickerArray = Cells(i,9).Value
+                    percentChangeArray = Cells(i,11).Value
+                    volumeArray = Cells(i,12).Value
+            Next y
+        Worksheets(x).Range("P2").Value = WorksheetFunction.Min(yearlyChange)
+            
+
+
+        Next y
+        
+        
         Next x    
 End Sub
